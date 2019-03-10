@@ -21,7 +21,7 @@ def simpson_integration(x):
     return res
 
 def quad_integration(x):
-    int=quad_integrator(SIMPSON_LEFT,x,function2(),SIMPSON_M)
+    int=quad_integrator(SIMPSON_LEFT,x,function2(),2*SIMPSON_M)
     (res,err)=int.calc()
     return (res,err)
 
@@ -29,7 +29,13 @@ def normal_cdf(x):
     res=norm.cdf(x)
     return res
 
+def get(x):
+    res1=simpson_integration(x)
+    print(round(res1,15))
+    (res2,err)=quad_integration(x)
+    print(round(res2,15))
+    print(round(err,15))
+    print(round(normal_cdf(x),15))
+    return (res2,err)
 
-print(simpson_integration(1))
-print(quad_integration(1))
-print(normal_cdf(1))
+get(5)

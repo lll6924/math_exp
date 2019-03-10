@@ -21,9 +21,9 @@ class strange_sampler(sampler):
     def get(self,x):
         return self._width*math.cos((2.*x+1.)/(2.*self._samples)*math.pi)
 
-samp=strange_sampler(10.,11)
-#samp=isometry_sampler(-10.,10.,11)
+#samp=strange_sampler(10.,21)
+samp=isometry_sampler(-10.,10.,8)
 x=samp.getAll()
 func=function1()
-int=linear_interpolator(x=x,y=func.get(x),fun=func)
+int=lagrangian_interpolator(x=x,y=func.get(x),fun=func)
 int.plot()

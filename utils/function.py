@@ -131,5 +131,5 @@ class quad_integrator(integrator):
         super().__init__(left,right,fun)
         self._m=m
     def calc(self):
-        ret=quad(self._fun,self._left,self._right,limit=self._m)
+        ret=quad(self._fun,self._left,self._right,limit=1000, maxp1=1000, limlst=1000)#self._m)
         return ret
