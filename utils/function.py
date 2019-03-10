@@ -1,9 +1,10 @@
 from scipy.interpolate import interp1d
+from scipy.integrate import quad
 import numpy as np
 from matplotlib import pyplot as plt
 
 __all__ = ['isdigit', 'function', 'sampler','isometry_sampler','interpolator','lagrangian_interpolator',
-           'linear_interpolator','spline_interpolator']
+           'linear_interpolator','spline_interpolator','integrator','quad_integrator','simpson_integrator']
 
 PLOT_SAMPLES=10000
 
@@ -43,7 +44,7 @@ class isometry_sampler(sampler):
         return float(x)/(self._samples-1.)*(self._right-self._left)+self._left
 
 class interpolator:
-    def feed(self,x,y,fun):
+    def __init__(self,x,y,fun):
         assert(len(x)==len(y))
         for i in range(len(x)):
             assert(isdigit(x[i]))
@@ -59,8 +60,8 @@ class interpolator:
         raise NotImplementedError()
 
 class lagrangian_interpolator(interpolator):
-    def feed(self,x,y,fun):
-        super().feed(x,y,fun)
+    def __init__(self,x,y,fun):
+        super().__init__(x,y,fun)
         self._f = self.get
     def get(self,x):
         res=0.
@@ -79,8 +80,8 @@ class lagrangian_interpolator(interpolator):
 
 
 class linear_interpolator(interpolator):
-    def feed(self,x,y,fun):
-        super().feed(x,y,fun)
+    def __init__(self,x,y,fun):
+        super().__init__(x,y,fun)
         self._f = interp1d(self._x,self._y)
     def get(self,x):
         return self._f(x)
@@ -91,8 +92,8 @@ class linear_interpolator(interpolator):
         plt.show()
 
 class spline_interpolator(interpolator):
-    def feed(self,x,y,fun):
-        super().feed(x,y,fun)
+    def __init__(self,x,y,fun):
+        super().__init__(x,y,fun)
         self._f = interp1d(self._x,self._y,kind='cubic')
     def get(self,x):
         return self._f(x)
@@ -101,3 +102,34 @@ class spline_interpolator(interpolator):
         plt.plot(self._x, self._y, 'o',xnew, self._fun(xnew), '-', xnew, self._f(xnew), '--')
         plt.legend(['data', 'function', 'spline'], loc='best')
         plt.show()
+
+class integrator:
+    def __init__(self,left,right,fun):
+        left=float(left)
+        right=float(right)
+        self._left=left
+        self._right=right
+        self._fun=fun
+    def calc(self):
+        raise NotImplementedError()
+
+class simpson_integrator(integrator):
+    def __init__(self,left,right,fun,m):
+        super().__init__(left,right,fun)
+        self._m=m
+    def calc(self):
+        ret=self._fun(self._left)+self._fun(self._right)
+        h=(self._right-self._left)/2./self._m
+        for i in range(self._m):
+            if(i!=0):
+                ret+=2*self._fun(float(i)/self._m*(self._right-self._left)+self._left)
+            ret+=4*self._fun(float(i*2+1)/self._m/2.*(self._right-self._left)+self._left)
+        return (ret*h/3.,None)
+
+class quad_integrator(integrator):
+    def __init__(self,left,right,fun,m):
+        super().__init__(left,right,fun)
+        self._m=m
+    def calc(self):
+        ret=quad(self._fun,self._left,self._right,limit=self._m)
+        return ret
