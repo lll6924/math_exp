@@ -3,7 +3,7 @@ from scipy.integrate import quad
 import numpy as np
 from matplotlib import pyplot as plt
 
-__all__ = ['isdigit', 'function', 'sampler','isometry_sampler','interpolator','lagrangian_interpolator',
+__all__ = ['isdigit', 'function', 'function2d', 'sampler','isometry_sampler','interpolator','lagrangian_interpolator',
            'linear_interpolator','spline_interpolator','integrator','quad_integrator','simpson_integrator']
 
 PLOT_SAMPLES=10000
@@ -16,6 +16,13 @@ class function:
     def __call__(self,x):
         return self.get(x)
     def get(self,x):
+        raise NotImplementedError()
+
+class function2d:
+    def __call__(self, x, y):
+        return self.get(x, y)
+
+    def get(self, x, y):
         raise NotImplementedError()
 
 class sampler:
