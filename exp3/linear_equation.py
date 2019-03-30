@@ -19,13 +19,17 @@ def p1_solver(A,b):
     gsa=gs(A,b,x0=np.full((n,1),0.5)).reshape(n)
     psa=ps(A,b,x0=np.full((n,1),0.5))
     print("directSolver=", dsa)
+    print(np.linalg.norm(dsa-np.full(n,1.)))
     print("jacobiSolver=",jsa)
     print("gaussSedeilSolver=",gsa)
     print("pcgSolver=",psa)
     return dsa
 
 def p1(n,epsilon):
-    xs = np.arange(1,n*0.1+1.,0.1)
+    xs = np.ones(n)
+    for i in range(n):
+        xs[i]+=i*0.1
+    print(xs)
     multiplier = np.ones(n)
     A1=[]
     for _ in range(n):
@@ -69,7 +73,7 @@ def p1(n,epsilon):
           condA2 / (1 - condA2 * DA_A) * DA_A)
     print("|△x|/x(disturb b2)=", np.linalg.norm(xb - x0) / np.linalg.norm(x0), " estimation:", condA2 * db_b)
 
-#p1(9,1e-8)
+#p1(7,1e-10)
 
 def p3(n):
     A=np.diag(np.full(n,3)).astype(np.float)
@@ -89,13 +93,14 @@ def p3(n):
     gs=gaussSedeilSolver()
 
     dsa=ds.solve(A,b1)
-    print(dsa)
+    #print(dsa)
     for i in range(10):
         print()
         print(i)
-        jsa=js.solve(A,b1,x01)
-        gsa=gs.solve(A,b1,x01)
+        jsa=js.solve(A,b2,x01)
+        gsa=gs.solve(A,b2,x01)
         A += np.diag(np.full(n, 3)).astype(np.float)
+        print(jsa)
     #print(jsa)
     #print(gsa)
 
@@ -203,7 +208,7 @@ def pn_1(n):
     #print(xs)
     #print(get_true_1(xs))
     #print(psa)
-    plt.plot(xs, get_true_1(xs), '--', xs, psa, '-')
+    plt.plot(xs, get_true_1(xs), '-', xs, psa, '--')
     plt.legend(['real f(x)','answer'], loc='best')
     plt.show()
 
