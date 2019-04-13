@@ -22,7 +22,6 @@ class p3_1_jac2:
         x2=x*x
         y=x/(x+1.)
         return -np.asarray(1.-np.power(y,180)+x*(1.-180.*np.power(y,179)/np.square(1+x))).reshape((1, 1))
-        #return np.asarray(-x2 + x2* np.power(y, 180) + 180. *x * np.power(y, 181)).reshape((1, 1))
 
 class p3_2_fun1:
     def __call__(self,x):
@@ -33,7 +32,7 @@ class p3_2_jac1:
     def __call__(self, x):
         x2=x*x
         y=x/(x+1.)
-        return np.asarray(-x2 + x2* np.power(y, 180) + 180. *x * np.power(y, 181)).reshape((1, 1))
+        return -np.asarray(1.-np.power(y,180)+x*(1.-180.*np.power(y,179)/np.square(1+x))).reshape((1, 1))
 
 class p3_2_fun2:
     def __call__(self,x):
@@ -44,7 +43,7 @@ class p3_2_jac2:
     def __call__(self, x):
         x2=x*x
         y=x/(x+1.)
-        return np.asarray(-x2 + x2* np.power(y, 20) + 20. *x * np.power(y, 21)).reshape((1, 1))
+        return -np.asarray(1.-np.power(y,20)+x*(1.-20.*np.power(y,19)/np.square(1+x))).reshape((1, 1))
 
 
 def p3_1():
@@ -119,7 +118,7 @@ def padd(lamb,n=10):
 
     solver=fsolve(np.zeros(shape=(n2),dtype=np.float),fun(),jac())
     ans=solver()
-    print(solver())
+    #print(solver())
     fig = plt.figure()
     ax = Axes3D(fig)
     X = np.arange(0, 1 + 1. / n, 1. / n)
