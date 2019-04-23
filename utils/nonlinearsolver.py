@@ -31,10 +31,12 @@ class NewtonIteration(nonlinearsolver):
     def __init__(self,x0,fun,jac):
         super().__init__(x0,fun,jac)
         self._solver=directSolver()
-    def solve(self):
+    def solve(self,observe=None):
         x=self._x0
-        for _ in range(MAXITE):
+        for i in range(MAXITE):
             #print(x)
+            if(i==observe):
+                print(x)
             dx=self._solver(self._jac(x),-self._fun(x))
             #print(self._jac(x),'--------',-self._fun(x))
             if(np.linalg.norm(dx)<TOL):

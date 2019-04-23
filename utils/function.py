@@ -2,9 +2,10 @@ from scipy.interpolate import interp1d
 from scipy.integrate import quad
 import numpy as np
 from matplotlib import pyplot as plt
-
+from scipy import poly1d
 __all__ = ['isdigit', 'function', 'function2d', 'sampler','isometry_sampler','interpolator','lagrangian_interpolator',
-           'linear_interpolator','spline_interpolator','integrator','quad_integrator','simpson_integrator']
+           'linear_interpolator','spline_interpolator','integrator','quad_integrator','simpson_integrator',
+           'trapezia_integrator']
 
 PLOT_SAMPLES=10000
 
@@ -79,6 +80,25 @@ class lagrangian_interpolator(interpolator):
                     multiplier=multiplier*(x-self._x[j])/(self._x[i]-self._x[j])
             res+=multiplier*self._y[i]
         return res
+    def get_fun(self):
+        ans=None
+        for i in range(self._n):
+            multiplier=1.
+            xs=[]
+            for j in range(self._n):
+                if(i!=j):
+                    multiplier=multiplier*(self._x[i]-self._x[j])
+                    xs.append(self._x[j])
+            print(xs)
+            poly=poly1d(xs,True)
+            print(poly)
+            multiplier=self._y[i]/multiplier
+            print(multiplier)
+            if(i==0):
+                ans=poly*multiplier
+            else:
+                ans=ans+poly*multiplier
+        return ans
     def plot(self):
         xnew = np.linspace(self._left, self._right, num=PLOT_SAMPLES, endpoint=True)
         plt.plot(self._x, self._y, 'o',xnew, self._fun(xnew), '-', xnew, self._f(xnew), '--')
@@ -119,6 +139,19 @@ class integrator:
         self._fun=fun
     def calc(self):
         raise NotImplementedError()
+
+class trapezia_integrator(integrator):
+    def __init__(self,left,right,fun,m):
+        super().__init__(left,right,fun)
+        self._m=m
+    def calc(self):
+        ret=0.
+        step=1./(self._m-1)*(self._right-self._left)+self._left
+        for i in range(self._m):
+            if(i!=0):
+                ret+=(self._fun(step*i)+self._fun(step*(i-1)))*step/2.
+        return ret
+
 
 class simpson_integrator(integrator):
     def __init__(self,left,right,fun,m):
