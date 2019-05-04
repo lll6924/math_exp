@@ -6,7 +6,7 @@ from utils.function import *
 from utils.odesolver import *
 from utils.equationsolver import *
 from utils.nonlinearsolver import *
-from scipy.optimize import fmin,minimize,root
+from scipy.optimize import fmin,minimize,root,linprog
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -86,6 +86,12 @@ def p6():
     plt.show()
     ns=NewtonIteration([2.],fun1(),jac1())
     print(ns.solve())
+def p7():
+    c=np.asarray([-0.09,-0.12,-0.08,-0.06,-0.03],dtype=np.float)
+    A_ub=np.asarray([[4.,6.,3.,1.,0.]],dtype=np.float)
+    b_ub=np.asarray([3000000.],dtype=np.float)
+    A_eq=np.asarray([[1.,1.,1.,1.,1.]],dtype=np.float)
+    b_eq=np.asarray([1000000.],dtype=np.float)
+    print(linprog(c,A_ub,b_ub,A_eq,b_eq))
 
-
-p6()
+p7()
